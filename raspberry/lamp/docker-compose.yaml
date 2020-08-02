@@ -1,0 +1,33 @@
+version: '2'
+
+services:
+    web:
+        #image: php:7.2-apache
+        image: myphp:1.0
+        container_name: php
+        ports:
+            - "80:80"
+        volumes:
+            - ./www:/var/www/html #your html/php pages
+    mysql:
+        image: hypriot/rpi-mysql:latest
+        container_name: mysql
+        restart: always
+        ports: 
+            - "3306:3306"
+        environment: 
+            MYSQL_ROOT_PASSWORD: example
+        volumes: #persist db data
+            - ./db:/var/lib/mysql
+    phpmyadmin:
+        image: jackgruber/phpmyadmin:latest
+        container_name: phpmyadmin
+        environment:
+            MYSQL_ROOT_PASSWORD: example
+            PMA_HOST: mysql #mysql service name
+        ports:
+            - "8080:80"
+        depends_on: #wait for mysql start
+            - mysql
+        links:
+            - mysql
